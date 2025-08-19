@@ -1,10 +1,16 @@
 import { nhost } from './nhost'
 
-async function gql<T>(query: string, variables?: Record<string, any>) {
-  const { data, error } = await nhost.graphql.request<T>(query, variables)
-  if (error) throw error
-  return data as T
+type GqlResponse<T> = { data: T; error?: unknown };
+
+async function gql<T>(query: string, variables?: Record<string, any>): Promise<T> {
+  const { data, error } = (await nhost.graphql.request(
+    query,
+    variables
+  )) as GqlResponse<T>;
+  if (error) throw error;
+  return data;
 }
+
 
 export type Msg = {
   id: string
